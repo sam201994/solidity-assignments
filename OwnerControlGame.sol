@@ -112,11 +112,7 @@ contract OwnerControlGame {
            userRecords[msg.sender].isRegistered = false;
         }
         contractValue = contractValue - amount;
-
     }
-
-    
-
 }
 
     // Write a function that allows:
