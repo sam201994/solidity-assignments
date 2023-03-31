@@ -9,7 +9,7 @@ contract Calculator {
 
     function subtract(uint256 a, uint256 b) public pure returns (int256) {
         require(a >= b, "Error: First argument should be greater than the second argument");
-        return int256(a - b);
+        return a-b;
     }
 
     function multiply(uint256 a, uint256 b) public pure returns (uint256) {
