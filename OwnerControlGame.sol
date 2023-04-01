@@ -9,7 +9,6 @@ contract OwnerControlGame {
     struct User {
         address userAddress;
         bool isRegistered;
-        bool ownerFlag;
         uint256 deposit;
     }
 
@@ -44,7 +43,6 @@ contract OwnerControlGame {
         User memory newUser;
         newUser.userAddress = owner;
         newUser.isRegistered = true;
-        newUser.ownerFlag = true;
         newUser.deposit = msg.value;
 
         userRecords[owner] = newUser;
@@ -77,7 +75,7 @@ contract OwnerControlGame {
         User memory newUser;
         newUser.userAddress = _userAddress;        
         newUser.isRegistered = true;
-        newUser.ownerFlag = false;
+        newUser.deposit = 0;
 
         userRecords[msg.sender] = newUser;
 
@@ -94,29 +92,21 @@ contract OwnerControlGame {
         address oldOwner = owner;
         owner = msg.sender;
         contractValue += msg.value;
-        userRecords[msg.sender].ownerFlag = true;
         userRecords[msg.sender].deposit = msg.value;
 
         emit OwnerChanged(oldOwner, msg.sender, block.timestamp);
     }
 
-    function withdrawFunds(uint256 amount) external notCurrentOwner() {
+    function withdrawFunds(uint256 amount) external notCurrentOwner() payable {
         User memory user = userRecords[msg.sender];
         require(user.isRegistered, "User is not registered");
-        require(user.ownerFlag, "User was never an owner");
         require(user.deposit >= amount, "User does not have enough funds to withdraw") ;
         userRecords[msg.sender].deposit = user.deposit - amount;
-
+        payable(msg.sender).transfer(amount);
         if(user.deposit == amount) {
-           userRecords[msg.sender].ownerFlag = false;
            userRecords[msg.sender].isRegistered = false;
         }
         contractValue = contractValue - amount;
     }
-}
 
-    // Write a function that allows:
-    // - Previous owners should be able to withdraw their ETH
-    // - Current owner should not even be able to call this function 
-    // - Once withdrawan, the contract's value should decrease as well
-    // - Once withdrawan, mark the User/caller as NOT REGISTERED.
+}
