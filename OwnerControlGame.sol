@@ -102,11 +102,17 @@ contract OwnerControlGame {
         require(user.isRegistered, "User is not registered");
         require(user.deposit >= amount, "User does not have enough funds to withdraw") ;
         userRecords[msg.sender].deposit = user.deposit - amount;
-        payable(msg.sender).transfer(amount);
         if(user.deposit == amount) {
            userRecords[msg.sender].isRegistered = false;
         }
         contractValue = contractValue - amount;
+        payable(msg.sender).transfer(amount);
     }
 
 }
+
+    // Write a function that allows:
+    // - Previous owners should be able to withdraw their ETH
+    // - Current owner should not even be able to call this function 
+    // - Once withdrawan, the contract's value should decrease as well
+    // - Once withdrawan, mark the User/caller as NOT REGISTERED.
