@@ -97,7 +97,7 @@ contract OwnerControlGame {
         emit OwnerChanged(oldOwner, msg.sender, block.timestamp);
     }
 
-    function withdrawFunds(uint256 amount) external notCurrentOwner() payable {
+    function withdrawFunds(uint256 amount) external notCurrentOwner() {
         User memory user = userRecords[msg.sender];
         require(user.isRegistered, "User is not registered");
         require(user.deposit >= amount, "User does not have enough funds to withdraw") ;
