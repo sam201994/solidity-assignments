@@ -9,13 +9,14 @@ contract OwnerControlGame {
     struct User {
         address userAddress;
         bool isRegistered;
-        uint256 deposit;
+        uint256 balance;
     }
 
     mapping(address => User) public userRecords;
 
     event OwnerChanged(address indexed oldOwner, address indexed newOwner, uint256 indexed timestamp);
     event NewUserRegistered(address indexed _user, uint256 indexed timestamp);
+    event FundsWithdrawn(address indexed _user, uint256 amount, uint256 indexed timestamp);
 
     modifier checkUser(address _userAddress){
         require(_userAddress == msg.sender, "Impersonating user - Bad call");
@@ -43,7 +44,7 @@ contract OwnerControlGame {
         User memory newUser;
         newUser.userAddress = owner;
         newUser.isRegistered = true;
-        newUser.deposit = msg.value;
+        newUser.balance = msg.value;
 
         userRecords[owner] = newUser;
         
@@ -63,10 +64,10 @@ contract OwnerControlGame {
     }
     
     function setContractValue() external onlyOwner() payable {
-        require(msg.value > getOwnerData().deposit, "Invalid amount");
+        require(msg.value > getOwnerData().balance, "Invalid amount");
         
         User memory user = userRecords[msg.sender];
-        userRecords[msg.sender].deposit = user.deposit + msg.value;
+        userRecords[msg.sender].balance = user.balance + msg.value;
 
         contractValue += msg.value;
     }
@@ -75,7 +76,7 @@ contract OwnerControlGame {
         User memory newUser;
         newUser.userAddress = _userAddress;        
         newUser.isRegistered = true;
-        newUser.deposit = 0;
+        newUser.balance = 0;
 
         userRecords[msg.sender] = newUser;
 
@@ -87,32 +88,32 @@ contract OwnerControlGame {
         User memory user = userRecords[msg.sender];
 
         require(user.isRegistered, "User is not registered");
-        require(msg.value > getOwnerData().deposit,"Less deposit than prev owner");
+        require(msg.value > getOwnerData().balance,"Less balance than prev owner");
 
         address oldOwner = owner;
         owner = msg.sender;
         contractValue += msg.value;
-        userRecords[msg.sender].deposit = msg.value;
+        userRecords[msg.sender].balance = msg.value;
 
         emit OwnerChanged(oldOwner, msg.sender, block.timestamp);
     }
 
     function withdrawFunds(uint256 amount) external notCurrentOwner() {
         User memory user = userRecords[msg.sender];
-        require(user.isRegistered, "User is not registered");
-        require(user.deposit >= amount, "User does not have enough funds to withdraw") ;
-        userRecords[msg.sender].deposit = user.deposit - amount;
-        if(user.deposit == amount) {
+        require(user.balance >= amount, "User does not have enough funds to withdraw") ;
+        userRecords[msg.sender].balance = user.balance - amount;
+        if(user.balance == amount) {
            userRecords[msg.sender].isRegistered = false;
         }
         contractValue = contractValue - amount;
         payable(msg.sender).transfer(amount);
+        emit FundsWithdrawn(msg.sender, amount, block.timestamp);
     }
 
 }
 
-    // Write a function that allows:
-    // - Previous owners should be able to withdraw their ETH
-    // - Current owner should not even be able to call this function 
-    // - Once withdrawan, the contract's value should decrease as well
-    // - Once withdrawan, mark the User/caller as NOT REGISTERED.
+// Write a function that allows:
+// - Previous owners should be able to withdraw their ETH
+// - Current owner should not even be able to call this function 
+// - Once withdrawan, the contract's value should decrease as well
+// - Once withdrawan, mark the User/caller as NOT REGISTERED.
