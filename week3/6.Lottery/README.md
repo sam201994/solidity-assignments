@@ -1,4 +1,5 @@
 # Lottery Smart contract
+
 ### Requirement
 1. Create a Lottery smart contract that allows multiple players to participate by sending ether to the contract (say 0.1 ETH)
 2. The contract should choose a random player as the winner of the lottery and send the total money held by the contract to the winner
