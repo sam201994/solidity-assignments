@@ -65,18 +65,18 @@ contract LendingBorrowing is Ownable {
         tokenToRToken[tokenAddress] = address(rToken);
         rTokenToToken[address(rToken)] = tokenAddress;
     }
-
+    
     function whitelistToken(address tokenAddress) public onlyOwner  validAddress(tokenAddress) {
         whitelistTokens[tokenAddress] = true;
         createReceiptTokens(tokenAddress);
     }
 
-    function approveToken(address _tokenAddress, uint256 _amount) public  validAddress(_tokenAddress) {
-        // Ensure that the contract has sufficient allowance to transfer the specified amount
-        require(IERC20(_tokenAddress).approve(address(this), _amount), "Approval failed");
-    }
+    // function approveToken(address _tokenAddress, uint256 _amount) public  validAddress(_tokenAddress) {
+    //     // Ensure that the contract has sufficient allowance to transfer the specified amount
+    //     require(IERC20(_tokenAddress).approve(address(this), _amount), "Approval failed");
+    // }
 
-
+    
     function depositToken(address tokenAddress, uint256 amount)
         public
         validAddress(tokenAddress)
@@ -90,7 +90,10 @@ contract LendingBorrowing is Ownable {
 
         // Check if the caller has approved the contract to spend the specified amount of tokens on their behalf
         IERC20 token = IERC20(tokenAddress);
-        require(token.allowance(msg.sender, address(this)) >= amount, "Token allowance too low");
+
+        address owner = msg.sender;
+        address spender = address(this);
+        require(token.allowance(owner, spender) >= amount, "Token allowance too low");
 
         // Transfer tokens from caller to this contract
         require(token.transferFrom(msg.sender, address(this), amount), "Failed to transfer tokens");
@@ -101,7 +104,7 @@ contract LendingBorrowing is Ownable {
         emit FundsDeposited(msg.sender, address(this), tokenAddress, amount);
         
     }
-
+    // we need not check is msg.sender is the original depostior. these reciept are transferable. 
     function withdrawToken(address rTokenAddress, uint256 amount) public validAddress(rTokenAddress) {
         require(amount > 0, "amount should be greater than 0");
 

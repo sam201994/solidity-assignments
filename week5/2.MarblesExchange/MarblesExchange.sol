@@ -60,7 +60,10 @@ contract Exchange {
         uint256 marbleStake = marbleStakes[_fromAddress].stakedAmount;
         uint256 marbleCount = (msg.value).div(marbleRate);
         require(marbleCount <= marbleStake, "Not enough marbles staked.");
-
+        address owner = _fromAddress;
+        address spender = address(this);
+        require(_marbleToken.allowance(owner, spender) >= marbleCount, "Token allowance too low");
+        
         _marbleToken.transferFrom(_fromAddress, msg.sender, marbleCount);
 
         _fromAddress.transfer(msg.value);
@@ -82,10 +85,11 @@ contract Exchange {
             _amount <= _marbleToken.balanceOf(msg.sender),
             "Staked amount should be less than the token balance in wallet."
         );
+        address owner = msg.sender;
+        address spender = address(this);
+        require(_marbleToken.allowance(owner, spender) >= _amount, "Token allowance too low");
         marbleStakes[msg.sender].stakedAmount = _amount;
         marbleStakes[msg.sender].marbleRateInWei = _marbleRateInWei;
-
-        _marbleToken.approve(address(this), _amount);
 
         // take amount of marbles and marbleRateInWei and add that to the marbleStakes
         // check if the msg.sender address has that many marbles to stake or not
