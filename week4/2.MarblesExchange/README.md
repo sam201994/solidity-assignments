@@ -3,7 +3,6 @@
 While we were kids at school it was a very popular culture to trade for small things among ourselves. Like, I had hundreds of marbles that were passed on to me by my elder brothers (free inheritance), and would love to exchange them for chocolates from another kid at school. Let’s code it.
 
 Except that in our program, there shall be no physical marbles or chocolates but only a digital ledger of exchange between marbles and of course Ether(from Remix).
-
  
 
 ###  Requirements

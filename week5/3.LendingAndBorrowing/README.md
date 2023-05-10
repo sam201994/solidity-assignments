@@ -8,7 +8,7 @@ Create a lending and borrowing contract that does the following things. Understa
 
 1. It allows for the deposit of a whitelisted set of tokens for example WBTC. But should not allows any other tokens to be deposited.
 
-2. Search for WBTC from the ethereum mainnet and deploy the contracts in our developer environment. Analyse and deploy the right contract.
+2. Create a sample ERC20 token and deploy it.
 
 3. As the developer of the Lending and Borrowing protocol create receipt tokens for the above tokens.
 

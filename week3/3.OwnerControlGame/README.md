@@ -1,4 +1,4 @@
-# Calculator Smart contract
+# Owner Control Game
 An Owner Controlled smart contract that allows the contract’s owner to set the contract’s actual value (an integer).Owners can also be changed based on specific rules.
 
 
